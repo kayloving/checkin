@@ -156,7 +156,7 @@ def hostloc_checkin(account, strage='local', show_secret=False):
         else:
             logger.debug('使用IP: %s', secret_log)
 
-    login_url = 'https://www.hostloc.com/member.php?mod=logging&action=login&loginsubmit=yes&infloat=yes&lssubmit=yes&inajax=1'
+    login_url = 'https://hostloc.com/member.php?mod=logging&action=login&loginsubmit=yes&infloat=yes&lssubmit=yes&inajax=1'
     login_post = s.post(login_url, {'username': username, 'password': password}, proxies=proxies, cookies=cookies)
 
     _aes = re.findall("toNumbers\(\"(.*?)\"\)?", login_post.text, flags=re.S)
@@ -176,7 +176,7 @@ def hostloc_checkin(account, strage='local', show_secret=False):
         login_post_with_cookies = s.post(login_url, {'username': username, 'password': password}, proxies=proxies, cookies=cookies)
 
     time.sleep(randint(1, 5))
-    user_info = s.get('https://www.hostloc.com/home.php?mod=spacecp&ac=credit', proxies=proxies, cookies=cookies).text
+    user_info = s.get('https://hostloc.com/home.php?mod=spacecp&ac=credit', proxies=proxies, cookies=cookies).text
     info_pattern = re.compile(r'>用户组: (\w+)</a>.*<em> 金钱: </em>(\d+)  &nbsp; </li>.*<li><em> 威望: </em>(\d+) </li>.*<li class=\"cl\"><em>积分: </em>(\d+) <span', flags=re.S)
     _current = re.search(info_pattern, user_info)
     if _current:
@@ -195,7 +195,7 @@ def hostloc_checkin(account, strage='local', show_secret=False):
         space_uid = randint(1, 35550)
         if space_uid in visited_space_uids:
             continue
-        space_text = s.get('https://www.hostloc.com/space-uid-%s.html' % space_uid, proxies=proxies, cookies=cookies).text
+        space_text = s.get('https://hostloc.com/space-uid-%s.html' % space_uid, proxies=proxies, cookies=cookies).text
         visited_space_uids.append(space_uid)
         time.sleep(randint(5, 10))
         if '抱歉，您指定的用户空间不存在' in space_text:
@@ -209,7 +209,7 @@ def hostloc_checkin(account, strage='local', show_secret=False):
         else:
             logger.debug('访问UID: %s, 成功', secret_log)
         _visit += 1
-    new_user_info = s.get('https://www.hostloc.com/home.php?mod=spacecp&ac=credit', proxies=proxies, cookies=cookies).text
+    new_user_info = s.get('https://hostloc.com/home.php?mod=spacecp&ac=credit', proxies=proxies, cookies=cookies).text
     _new = re.search(info_pattern, new_user_info)
     logger.info("(之前)用户: %s, 用户组: %s, 金钱: %s, 威望: %s, 积分: %s", username_log, _current.group(1), _current.group(2), _current.group(3), _current.group(4))
     logger.info("(现在)用户: %s, 用户组: %s, 金钱: %s, 威望: %s, 积分: %s", username_log, _new.group(1), _new.group(2), _new.group(3), _new.group(4))
